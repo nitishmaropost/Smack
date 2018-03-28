@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.coderswag.nitish.smack.R
+import com.coderswag.nitish.smack.smack.Services.AuthService
 import kotlinx.android.synthetic.main.activity_create_user.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import java.util.*
@@ -50,6 +51,8 @@ class CreateUserActivity : AppCompatActivity() {
     }
 
     fun createUserButtonClicked(view: View) {
+        AuthService.registerUser(this, "j@j.com", "123456"){complete ->
 
+        }
     }
 }
