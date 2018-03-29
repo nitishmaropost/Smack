@@ -32,11 +32,10 @@ object AuthService {
             println(response)
             complete(true)
 
-        }, Response.ErrorListener {error ->
+        }, Response.ErrorListener { error ->
             println(error.message)
             complete(false)
-        })
-        {
+        }) {
             override fun getBodyContentType(): String {
                 return "application/json; charset=utf-8"
             }
@@ -49,14 +48,14 @@ object AuthService {
         Volley.newRequestQueue(context).add(registerRequest)
     }
 
-    fun loginUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit){
+    fun loginUser(context: Context, email: String, password: String, complete: (Boolean) -> Unit) {
 
         val jsonBody = JSONObject()
         jsonBody.put("email", email)
         jsonBody.put("password", password)
         val requestBody = jsonBody.toString()
 
-        val loginRequest = object : JsonObjectRequest(Method.POST, LOGIN_URL, null, Response.Listener {response ->
+        val loginRequest = object : JsonObjectRequest(Method.POST, LOGIN_URL, null, Response.Listener { response ->
 
             try {
                 authToken = response.getString("token")
@@ -68,10 +67,9 @@ object AuthService {
                 complete(false)
             }
 
-        }, Response.ErrorListener {error ->
+        }, Response.ErrorListener { error ->
             complete(false)
-        })
-        {
+        }) {
             override fun getBodyContentType(): String {
                 return "application/json; charset=utf-8"
             }
@@ -92,7 +90,7 @@ object AuthService {
         jsonBody.put("avatarColor", avatarColor)
         val requestBody = jsonBody.toString()
 
-        val loginRequest = object : JsonObjectRequest(Method.POST, ADD_USER_URL, null, Response.Listener {response ->
+        val loginRequest = object : JsonObjectRequest(Method.POST, ADD_USER_URL, null, Response.Listener { response ->
 
             try {
                 UserDataService.name = response.getString("name")
@@ -106,10 +104,9 @@ object AuthService {
                 complete(false)
             }
 
-        }, Response.ErrorListener {error ->
+        }, Response.ErrorListener { error ->
             complete(false)
-        })
-        {
+        }) {
             override fun getBodyContentType(): String {
                 return "application/json; charset=utf-8"
             }
