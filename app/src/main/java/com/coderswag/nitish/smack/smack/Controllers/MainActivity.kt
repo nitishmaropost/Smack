@@ -10,8 +10,11 @@ import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import com.coderswag.nitish.smack.R
 import com.coderswag.nitish.smack.smack.Services.AuthService
 import com.coderswag.nitish.smack.smack.Services.UserDataService
@@ -34,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReciever, IntentFilter(BROADCAST_USER_DATA_CHANGE))
+        hideKeyboard()
     }
 
     private val userDataChangeReciever = object : BroadcastReceiver() {
@@ -72,10 +76,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun addChannelClicked(view: View){
+        if(AuthService.isLoggedIn) {
+            val builder = AlertDialog.Builder(this)
+            val alertAddChannel = layoutInflater.inflate(R.layout.add_channel_layout, null)
+            builder.setView(alertAddChannel)
+                    .setPositiveButton("Add") { dialogInterface, i ->
+                        val nameTextField = alertAddChannel.findViewWithTag<EditText>(R.id.addChannelNameTxt)
+                        val descTextField = alertAddChannel.findViewWithTag<EditText>(R.id.addChannelDescTxt)
+                        val channelName = nameTextField.text.toString()
+                        val channelDesc = descTextField.text.toString()
+
+                        // Create channel
+
+                        hideKeyboard()
+                    }
+                    .setNegativeButton("Cancel") {dialogInterface, i ->  
+                        hideKeyboard()
+                    }
+                    .show()
+        }
 
     }
 
     fun sendMessageButtonClick(view: View){
 
+    }
+
+    fun hideKeyboard() {
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if(inputManager.isAcceptingText) {
+            inputManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+        }
     }
 }
