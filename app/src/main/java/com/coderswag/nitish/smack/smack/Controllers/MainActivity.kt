@@ -16,11 +16,14 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.coderswag.nitish.smack.R
+import com.coderswag.nitish.smack.smack.Model.Channel
 import com.coderswag.nitish.smack.smack.Services.AuthService
+import com.coderswag.nitish.smack.smack.Services.MessageService
 import com.coderswag.nitish.smack.smack.Services.UserDataService
 import com.coderswag.nitish.smack.smack.Utilities.BROADCAST_USER_DATA_CHANGE
 import com.coderswag.nitish.smack.smack.Utilities.SOCKET_URL
 import io.socket.client.IO
+import io.socket.emitter.Emitter
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -40,22 +43,20 @@ class MainActivity : AppCompatActivity() {
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
         hideKeyboard()
+        socket.connect()
+        socket.on("channelCreated", onNewChannel)
     }
 
     override fun onResume() {
         super.onResume()
-        socket.connect()
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReciever, IntentFilter(BROADCAST_USER_DATA_CHANGE))
-    }
 
-    override fun onPause() {
-        super.onPause()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReciever)
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReciever, IntentFilter(BROADCAST_USER_DATA_CHANGE))
     }
 
     override fun onDestroy() {
         super.onDestroy()
         socket.disconnect()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReciever)
     }
 
     private val userDataChangeReciever = object : BroadcastReceiver() {
@@ -111,6 +112,17 @@ class MainActivity : AppCompatActivity() {
 
                     }
                     .show()
+        }
+
+    }
+
+    private val onNewChannel = Emitter.Listener {args ->
+        runOnUiThread {
+            val channelName = args[0] as String
+            val channelDesc = args[1] as String
+            val channelId = args[2] as String
+            val channel = Channel(channelName, channelDesc, channelId)
+            MessageService.channels.add(channel)
         }
 
     }
