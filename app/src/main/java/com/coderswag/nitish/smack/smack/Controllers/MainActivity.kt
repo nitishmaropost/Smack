@@ -19,12 +19,16 @@ import com.coderswag.nitish.smack.R
 import com.coderswag.nitish.smack.smack.Services.AuthService
 import com.coderswag.nitish.smack.smack.Services.UserDataService
 import com.coderswag.nitish.smack.smack.Utilities.BROADCAST_USER_DATA_CHANGE
+import com.coderswag.nitish.smack.smack.Utilities.SOCKET_URL
+import io.socket.client.IO
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    val socket = IO.socket(SOCKET_URL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +39,23 @@ class MainActivity : AppCompatActivity() {
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReciever, IntentFilter(BROADCAST_USER_DATA_CHANGE))
         hideKeyboard()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        socket.connect()
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReciever, IntentFilter(BROADCAST_USER_DATA_CHANGE))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(userDataChangeReciever)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        socket.disconnect()
     }
 
     private val userDataChangeReciever = object : BroadcastReceiver() {
@@ -81,17 +99,16 @@ class MainActivity : AppCompatActivity() {
             val alertAddChannel = layoutInflater.inflate(R.layout.add_channel_layout, null)
             builder.setView(alertAddChannel)
                     .setPositiveButton("Add") { dialogInterface, i ->
-                        val nameTextField = alertAddChannel.findViewWithTag<EditText>(R.id.addChannelNameTxt)
-                        val descTextField = alertAddChannel.findViewWithTag<EditText>(R.id.addChannelDescTxt)
+                        val nameTextField = alertAddChannel.findViewById<EditText>(R.id.addChannelNameTxt)
+                        val descTextField = alertAddChannel.findViewById<EditText>(R.id.addChannelDescTxt)
                         val channelName = nameTextField.text.toString()
                         val channelDesc = descTextField.text.toString()
 
                         // Create channel
-
-                        hideKeyboard()
+                        socket.emit("newChannel", channelName, channelDesc)
                     }
-                    .setNegativeButton("Cancel") {dialogInterface, i ->  
-                        hideKeyboard()
+                    .setNegativeButton("Cancel") {dialogInterface, i ->
+
                     }
                     .show()
         }
@@ -99,7 +116,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun sendMessageButtonClick(view: View){
-
+        hideKeyboard()
     }
 
     fun hideKeyboard() {
