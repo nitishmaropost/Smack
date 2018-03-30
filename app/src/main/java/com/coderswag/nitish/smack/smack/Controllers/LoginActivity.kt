@@ -1,9 +1,11 @@
 package com.coderswag.nitish.smack.smack.Controllers
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.coderswag.nitish.smack.R
 import com.coderswag.nitish.smack.smack.Services.AuthService
@@ -18,6 +20,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun loginLoginButtonClicked(view: View) {
+        hideKeyboard()
         if (loginEmailText.text.isNullOrEmpty() || loginPasswordText.text.isNullOrEmpty()) {
             Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
         } else {
@@ -61,5 +64,12 @@ class LoginActivity : AppCompatActivity() {
     fun errorToast() {
         Toast.makeText(this, "Something went wrong !!", Toast.LENGTH_SHORT).show()
         enableSpinner(false)
+    }
+
+    fun hideKeyboard() {
+        val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if(inputManager.isAcceptingText) {
+            inputManager.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+        }
     }
 }
