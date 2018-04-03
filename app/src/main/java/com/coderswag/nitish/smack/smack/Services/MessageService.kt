@@ -1,17 +1,12 @@
 package com.coderswag.nitish.smack.smack.Services
 
 import android.content.Context
-import android.content.Intent
-import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
+import com.coderswag.nitish.smack.smack.Controllers.App
 import com.coderswag.nitish.smack.smack.Model.Channel
-import com.coderswag.nitish.smack.smack.Utilities.BROADCAST_USER_DATA_CHANGE
 import com.coderswag.nitish.smack.smack.Utilities.FIND_CHANNELS_URL
-import com.coderswag.nitish.smack.smack.Utilities.FIND_USER_URL
 import org.json.JSONException
 
 object MessageService {
@@ -48,11 +43,11 @@ object MessageService {
 
             override fun getHeaders(): MutableMap<String, String> {
                 val headers = HashMap<String, String>()
-                headers.put("Authorization", "Bearer ${AuthService.authToken}")
+                headers.put("Authorization", "Bearer ${App.prefs.authToken}")
                 return headers
             }
         }
 
-        Volley.newRequestQueue(context).add(channelsRequest)
+        App.prefs.requestQueue.add(channelsRequest)
     }
 }
