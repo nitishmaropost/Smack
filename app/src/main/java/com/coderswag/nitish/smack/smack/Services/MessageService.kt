@@ -13,7 +13,7 @@ object MessageService {
 
     val channels = ArrayList<Channel>()
 
-    fun findChannels(context: Context, complete : (Boolean) -> Unit) {
+    fun findChannels(complete : (Boolean) -> Unit) {
 
         val channelsRequest = object : JsonArrayRequest(Method.GET, FIND_CHANNELS_URL, null, Response.Listener { response ->
             try {

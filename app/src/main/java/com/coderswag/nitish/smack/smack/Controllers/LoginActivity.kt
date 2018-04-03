@@ -25,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
         } else {
             enableSpinner(true)
-            AuthService.loginUser(this,loginEmailText.text.toString(), loginPasswordText.text.toString()) {loginSuccess ->
+            AuthService.loginUser(loginEmailText.text.toString(), loginPasswordText.text.toString()) {loginSuccess ->
                 if (loginSuccess) {
                     AuthService.findUserByEmail(this) {findUserSuccess ->
                         if (findUserSuccess) {

@@ -65,11 +65,11 @@ class CreateUserActivity : AppCompatActivity() {
             Toast.makeText(this, "Please enter required fields", Toast.LENGTH_SHORT).show()
         } else {
             enableSpinner(true)
-            AuthService.registerUser(this, email.toString(), password.toString()) { registerSuccess ->
+            AuthService.registerUser(email.toString(), password.toString()) { registerSuccess ->
                 if (registerSuccess) {
-                    AuthService.loginUser(this, email.toString(), password.toString()) { loginSuccess ->
+                    AuthService.loginUser(email.toString(), password.toString()) { loginSuccess ->
                         if (loginSuccess) {
-                            AuthService.createUser(this, userName.toString(), email.toString(), userAvatar.toString(), avatarColor.toString()) { createSuccess ->
+                            AuthService.createUser(userName.toString(), email.toString(), userAvatar.toString(), avatarColor.toString()) { createSuccess ->
                                 if (createSuccess) {
                                     val userDataChange = Intent(BROADCAST_USER_DATA_CHANGE)
                                     LocalBroadcastManager.getInstance(this).sendBroadcast(userDataChange)
