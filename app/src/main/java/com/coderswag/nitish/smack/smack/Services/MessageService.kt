@@ -6,12 +6,14 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonArrayRequest
 import com.coderswag.nitish.smack.smack.Controllers.App
 import com.coderswag.nitish.smack.smack.Model.Channel
+import com.coderswag.nitish.smack.smack.Model.Message
 import com.coderswag.nitish.smack.smack.Utilities.FIND_CHANNELS_URL
 import org.json.JSONException
 
 object MessageService {
 
     val channels = ArrayList<Channel>()
+    val messages = ArrayList<Message>()
 
     fun findChannels(complete : (Boolean) -> Unit) {
 
