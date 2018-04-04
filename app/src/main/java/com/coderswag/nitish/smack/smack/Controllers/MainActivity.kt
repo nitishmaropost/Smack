@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
         setAdapters()
+        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReciever, IntentFilter(BROADCAST_USER_DATA_CHANGE))
         hideKeyboard()
         socket.connect()
         socket.on("channelCreated", onNewChannel)
@@ -81,12 +82,6 @@ class MainActivity : AppCompatActivity() {
 
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(userDataChangeReciever, IntentFilter(BROADCAST_USER_DATA_CHANGE))
     }
 
     override fun onDestroy() {
@@ -151,6 +146,7 @@ class MainActivity : AppCompatActivity() {
             loginBtnNavHeader.text = "Login"
             userImageNavHeader.setImageResource(R.drawable.profiledefault)
             userImageNavHeader.setBackgroundColor(Color.TRANSPARENT)
+            mainChannelName.text = "Pease login"
         } else {
             val loginIntent = Intent(this, LoginActivity::class.java)
             startActivity(loginIntent)
@@ -218,7 +214,7 @@ class MainActivity : AppCompatActivity() {
         if(App.prefs.isLoggedIn && !messageTextField.text.isNullOrEmpty() && selectedChannel != null) {
             val userId = UserDataService.id
             val channelId = selectedChannel!!.id
-            socket.emit("newMessage", messageTextField.text, userId, channelId, UserDataService.name, UserDataService.avatarName, UserDataService.avatarColor)
+            socket.emit("newMessage", messageTextField.text.toString(), userId, channelId, UserDataService.name, UserDataService.avatarName, UserDataService.avatarColor)
             messageTextField.text.clear()
             hideKeyboard()
         }
